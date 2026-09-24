@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oxygen Delivery Index Simulation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto+Mono:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="g-card">
+    
+    <!-- Top Google Material Surface (Canvas + Header) -->
+    <section class="g-surface-top">
+      <div class="g-header">
+        <div class="g-title-wrapper">
+          <span class="g-badge">Clinical Model</span>
+          <h1 class="g-title">Oxygen Delivery & Transport</h1>
+        </div>
+        <button id="play-pause-btn" class="g-fab" aria-label="Toggle playback">
+          <span id="play-icon">⏸</span>
+        </button>
+      </div>
+
+      <div class="animation-container">
+        <canvas id="flowCanvas"></canvas>
+      </div>
+
+      <!-- Ratio Bar with Material Styling & Tooltip -->
+      <div class="ratio-bar-container">
+        <div class="ratio-bar" id="ratio-bar">
+          <div class="ratio-fill" id="ratio-fill"></div>
+          <span class="ratio-text" id="ratio-text">Bound: 98% / Plasma: 1.6%</span>
+          
+          <div class="g-tooltip ratio-tooltip" id="ratio-tooltip">
+            <strong class="tooltip-header">Oxygen Transport Distribution</strong>
+            <p id="tooltip-text">Calculating distribution...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics Strip with Hover Formula Tooltips -->
+    <section class="g-metrics-strip">
+      <!-- Total Content Item with Formula Tooltip -->
+      <div class="metric-item has-tooltip">
+        <div class="metric-label">Total Content (CaO<sub>2</sub>)</div>
+        <div class="metric-value"><span id="val-cao2">18.68</span> <span class="metric-unit">mL/dL</span></div>
+        <div class="g-tooltip metric-tooltip">
+          <strong class="tooltip-header">Total Arterial Oxygen Content (CaO₂)</strong>
+          <div class="formula-box">CaO₂ = (Hb × 1.34 × SaO₂/100) + (PaO₂ × 0.0031)</div>
+          <p class="formula-desc">Sums oxygen bound to hemoglobin (the primary carrier) with oxygen dissolved directly in blood plasma.</p>
+        </div>
+      </div>
+
+      <div class="metric-divider"></div>
+
+      <!-- Delivery Index Item with Formula Tooltip -->
+      <div class="metric-item has-tooltip">
+        <div class="metric-label">Delivery Index (DO<sub>2</sub>I)</div>
+        <div class="metric-value"><span id="val-do2i">560</span> <span class="metric-unit">mL/min/m²</span></div>
+        <div class="g-tooltip metric-tooltip">
+          <strong class="tooltip-header">Oxygen Delivery Index (DO₂I)</strong>
+          <div class="formula-box">DO₂I = CI × CaO₂ × 10</div>
+          <p class="formula-desc">Measures oxygen volume pumped to tissues per minute per m² of body surface area. The factor of 10 converts dL to Liters.</p>
+        </div>
+      </div>
+
+      <div class="metric-divider"></div>
+
+      <!-- Clinical Status Chip -->
+      <div class="metric-item">
+        <div class="metric-label">Clinical Status</div>
+        <div class="status-container" id="status-container">
+          <div class="status-chip status-normal" id="val-status">Normal</div>
+          <div class="g-tooltip status-tooltip" id="status-tooltip">
+            <strong id="status-tooltip-title" class="tooltip-header"></strong>
+            <p id="status-tooltip-text"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Controls -->
+    <section class="g-controls-section">
+      <div class="scenarios-wrapper">
+        <span class="section-label">Clinical Scenarios</span>
+        <div class="chip-group" id="scenario-pills">
+          <button class="chip active" data-scenario="normal">Normal</button>
+          <button class="chip" data-scenario="anemia">Anemic Hypoxia</button>
+          
+          <button class="chip has-chip-tooltip" data-scenario="hypoxemia">
+            Hypoxemic St...
+            <span class="chip-tooltip">Hypoxemic State</span>
+          </button>
+          <button class="chip has-chip-tooltip" data-scenario="cardiogenic">
+            Cardiogenic S...
+            <span class="chip-tooltip">Cardiogenic Shock</span>
+          </button>
+          
+          <button class="chip" data-scenario="custom">Custom</button>
+        </div>
+      </div>
+
+      <div class="controls-grid">
+        <!-- CI Slider -->
+        <div class="control-box">
+          <div class="control-header">
+            <div class="label-with-tooltip">
+              <label for="input-ci">Cardiac Index (CI)</label>
+              <div class="g-tooltip label-tooltip">
+                <strong class="tooltip-header">Hemodynamics Core</strong>
+                <div class="formula-box">CI = CO ÷ BSA</div>
+                <div class="formula-box">CO = HR × SV</div>
+                <p class="formula-desc"><strong>SV Determinants:</strong> Preload, Contractility, Afterload.</p>
+              </div>
+            </div>
+            <span class="control-val"><span id="disp-ci">3.0</span> <span class="sub-unit">L/min/m²</span></span>
+          </div>
+          <input type="range" id="input-ci" min="0.5" max="6.0" step="0.1" value="3.0">
+          <span class="normal-range-hint">Normal: 2.5 – 4.0 L/min/m²</span>
+        </div>
+
+        <!-- Hb Slider -->
+        <div class="control-box">
+          <div class="control-header">
+            <label for="input-hgb">Hemoglobin (Hb)</label>
+            <span class="control-val"><span id="disp-hgb">14.0</span> <span class="sub-unit">g/dL</span></span>
+          </div>
+          <input type="range" id="input-hgb" min="3.0" max="20.0" step="0.1" value="14.0">
+          <span class="normal-range-hint">Normal: 12.0 – 16.0 g/dL</span>
+        </div>
+
+        <!-- SaO2 Slider -->
+        <div class="control-box">
+          <div class="control-header">
+            <label for="input-sao2">Arterial Saturation (SaO<sub>2</sub>)</label>
+            <span class="control-val"><span id="disp-sao2">98</span> <span class="sub-unit">%</span></span>
+          </div>
+          <input type="range" id="input-sao2" min="50" max="100" step="1" value="98">
+          <span class="normal-range-hint">Normal: 95 – 100 %</span>
+        </div>
+
+        <!-- PaO2 Slider -->
+        <div class="control-box">
+          <div class="control-header">
+            <label for="input-pao2">Arterial Tension (PaO<sub>2</sub>)</label>
+            <span class="control-val"><span id="disp-pao2">95</span> <span class="sub-unit">mmHg</span></span>
+          </div>
+          <input type="range" id="input-pao2" min="30" max="660" step="1" value="95">
+          <span class="normal-range-hint">Normal: 80 – 100 mmHg</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

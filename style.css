@@ -34,7 +34,6 @@ body {
   padding: 1.5rem;
 }
 
-/* Material Design Card */
 .g-card {
   width: 100%;
   max-width: 840px;
@@ -45,7 +44,6 @@ body {
   overflow: visible;
 }
 
-/* Top Surface */
 .g-surface-top {
   background-color: #1f1f1f;
   color: #ffffff;
@@ -84,7 +82,6 @@ body {
   color: #e3e3e3;
 }
 
-/* Material Action Button */
 .g-fab {
   background-color: #2d2f31;
   color: #e3e3e3;
@@ -98,6 +95,7 @@ body {
   justify-content: center;
   font-size: 1.1rem;
   transition: background-color 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
 }
 
 .g-fab:hover {
@@ -105,7 +103,6 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-/* Animation Area */
 .animation-container {
   position: relative;
   height: 120px;
@@ -124,7 +121,6 @@ canvas {
   height: 100%;
 }
 
-/* Ratio Bar */
 .ratio-bar-container {
   display: flex;
   justify-content: center;
@@ -169,11 +165,11 @@ canvas {
   letter-spacing: 0.02em;
 }
 
-/* Google Material Tooltips */
 .g-tooltip {
   visibility: hidden;
   opacity: 0;
   width: 320px;
+  max-width: 85vw;
   background-color: var(--google-grey-900);
   color: #ffffff;
   text-align: left;
@@ -221,7 +217,6 @@ canvas {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Metrics Strip */
 .g-metrics-strip {
   display: flex;
   align-items: center;
@@ -268,7 +263,6 @@ canvas {
   color: var(--google-grey-700);
 }
 
-/* Metric Hover Styles */
 .metric-item.has-tooltip {
   cursor: pointer;
 }
@@ -313,6 +307,7 @@ canvas {
   margin: 0.35rem 0;
   color: #8ab4f8;
   font-weight: 500;
+  word-wrap: break-word;
 }
 
 .formula-desc {
@@ -322,7 +317,6 @@ canvas {
   margin-top: 0.25rem;
 }
 
-/* Status Chip */
 .status-container {
   display: inline-block;
   position: relative;
@@ -340,28 +334,12 @@ canvas {
   letter-spacing: 0.01em;
 }
 
-.status-normal {
-  background-color: var(--google-green-surface);
-  color: var(--google-green);
-}
+.status-normal { background-color: var(--google-green-surface); color: var(--google-green); }
+.status-low { background-color: var(--google-red-surface); color: var(--google-red); }
+.status-high { background-color: var(--google-amber-surface); color: var(--google-amber); }
 
-.status-low {
-  background-color: var(--google-red-surface);
-  color: var(--google-red);
-}
-
-.status-high {
-  background-color: var(--google-amber-surface);
-  color: var(--google-amber);
-}
-
-.status-container.has-tooltip {
-  cursor: pointer;
-}
-
-.status-container.has-tooltip .status-chip {
-  box-shadow: 0 0 0 1px currentColor;
-}
+.status-container.has-tooltip { cursor: pointer; }
+.status-container.has-tooltip .status-chip { box-shadow: 0 0 0 1px currentColor; }
 
 .status-tooltip {
   bottom: 130%;
@@ -386,7 +364,6 @@ canvas {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Controls Section */
 .g-controls-section {
   padding: 1.75rem 2rem 2.25rem 2rem;
   background-color: #ffffff;
@@ -405,6 +382,7 @@ canvas {
 
 .chip-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 2rem;
   overflow: visible;
@@ -465,7 +443,6 @@ canvas {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Control Grids */
 .controls-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -491,7 +468,6 @@ canvas {
   color: var(--google-grey-800);
 }
 
-/* Inner Label Tooltip (CI) */
 .label-with-tooltip {
   position: relative;
   display: inline-flex;
@@ -539,7 +515,6 @@ canvas {
   color: var(--google-grey-700);
 }
 
-/* Normal Range Hints */
 .normal-range-hint {
   display: block;
   font-family: 'Roboto', sans-serif;
@@ -618,4 +593,91 @@ input[type=range]::-moz-range-thumb {
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
   transition: transform 0.15s;
+}
+
+/* -------------------------------------
+   Responsive Design for Mobile Devices
+-------------------------------------- */
+@media (max-width: 768px) {
+  body {
+    padding: 0.5rem;
+  }
+  
+  .g-card {
+    border-radius: 20px;
+  }
+  
+  .g-surface-top, 
+  .g-controls-section {
+    padding: 1.25rem 1.25rem;
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+  }
+  
+  .g-controls-section {
+    border-radius: 0 0 19px 19px;
+  }
+
+  .g-title {
+    font-size: 1.15rem;
+  }
+  
+  .g-fab {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+  
+  .ratio-bar {
+    width: 95%;
+  }
+  
+  .g-metrics-strip {
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  .metric-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .chip-group {
+    justify-content: flex-start;
+  }
+
+  .g-tooltip {
+    width: 280px;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px) !important; /* Forces centering on mobile */
+  }
+
+  /* Adjust tooltips so they don't bleed off screen edges */
+  .label-tooltip {
+    left: auto;
+    right: 0;
+    transform: translateY(4px) !important;
+  }
+  
+  .label-tooltip::after {
+    left: auto;
+    right: 20px;
+  }
+
+  .metric-item.has-tooltip:hover .metric-tooltip,
+  .ratio-bar:hover .ratio-tooltip,
+  .status-container.has-tooltip:hover .status-tooltip,
+  .label-with-tooltip:hover .label-tooltip {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+  
+  .label-with-tooltip:hover .label-tooltip {
+    transform: translateY(0) !important;
+  }
 }

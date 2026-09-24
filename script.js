@@ -51,20 +51,24 @@ document.addEventListener("DOMContentLoaded", () => {
     input.style.setProperty('--progress', `${percentage}%`);
   }
 
+  // Particle Class: Fixed continuous flow with permanent individual speeds
   class Particle {
     constructor() {
       this.reset(true);
     }
     reset(randomX = false) {
-      this.x = randomX ? Math.random() * canvas.width : -10;
+      // Staggered off-screen respawn prevents particles from entering in clumps
+      this.x = randomX ? Math.random() * canvas.width : -(Math.random() * 60 + 10);
       this.baseY = (canvas.height / 2) + (Math.random() * 40 - 20);
       this.radius = Math.random() * 3 + 3;
       this.phase = Math.random() * Math.PI * 2;
       this.alpha = Math.random() * 0.4 + 0.6;
+      // Assign a permanent unique speed to each particle to ensure continuous mixing
+      this.speedMultiplier = 1.2 + (Math.random() * 1.5);
     }
     update(speed) {
       if (isPlaying) {
-        this.x += speed * (2 + Math.random());
+        this.x += speed * this.speedMultiplier;
         this.y = this.baseY + Math.sin(this.x * 0.03 + this.phase) * 8;
         
         if (this.x - this.radius > canvas.width) {
